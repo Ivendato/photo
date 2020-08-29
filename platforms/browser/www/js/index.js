@@ -16,6 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+var app7 = new Framework7();
+
+
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -54,6 +59,32 @@ var app = {
     }
 };
 
+var app7 = new Framework7({
+    // App root element
+    root: '#app',
+    // App Name
+    name: 'My App',
+    // App id
+    id: 'com.myapp.test',
+    // Enable swipe panel
+    panel: {
+      swipe: 'left',
+    },
+    // Add default routes
+    routes: [
+      {
+        path: '/about/',
+        url: 'about.html',
+      },
+    ],
+    // ... other parameters
+  });
+  
+  var mainView = app7.views.create('.view-main');
+
+
+
+
 
 function cameraTakePicture() { 
     navigator.camera.getPicture(onSuccess, onFail, {  
@@ -65,10 +96,93 @@ function cameraTakePicture() {
        var image = document.getElementById('myImage'); 
        image.src = "data:image/jpeg;base64," + imageData; 
 
-       alert();
+       guarda()
+
     }  
     
     function onFail(message) { 
        alert('Failed because: ' + message); 
     } 
  }
+
+
+
+ function guarda(){
+     var fotoguar = $$(#imageData).val();
+
+     app7.preloader.show('gray');
+
+ app7.request({
+    url: 'http://localhost/team/api/users.php',
+    data:{fotouno:fotoguar},
+    method:'POST',
+    crossDomain: true,
+    success:function(data){
+         
+      app7.preloader.hide();
+
+      var objson = JSON.parse(data);
+
+      if(objson.status_message == "CORRECTO"){
+
+      alert("Muchas gracias por la foto");
+      
+      }else{
+
+        alert("Hubo un error intentalo nuevamente");
+      }
+    
+    },
+    error:function(error){
+
+      app7.preloader.hide();
+    
+    }
+    
+    });
+
+}
+
+function getphoto(){
+
+    app7.preloader.show('blue');
+  
+  
+    app7.request({
+      url: 'http://localhost/team/api/slider.php',
+      data:{},
+      method:'POST',
+      crossDomain: true,
+      success:function(data){
+           
+        app7.preloader.hide();
+  
+        var objson = JSON.parse(data);
+  
+        var pieza= "";
+  
+        
+  
+        for(x in objson.data){
+  
+             console.log(objson.data[x].titulo);
+  
+             pieza = '<option value="'+objson.data[x].id+'"> '+objson.data[x].titulo+'</option>';
+  
+             $$('#piezas').append(pieza);
+  
+        }
+  
+        
+      
+      },
+      error:function(error){
+  
+        app7.preloader.hide();
+      
+      }
+      
+      });
+
+
+
